@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="en" class="demo-1 no-js">
+	<head>
+		<meta charset="UTF-8" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<title>Juego 8 reinas</title>
+		<link rel="icon" href="imagen/icono.png">
+		<link rel="stylesheet" type="text/css" href="css/normalize.css" />
+		<link rel="stylesheet" type="text/css" href="css/demo.css" />
+		<link rel="stylesheet" type="text/css" href="css/component.css" />
+	
+	</head>
+	<body>
+
+<style type="text/css" media="screen">
+
+	html,body {overflow-x:hidden;}
+
+</style>
+		<div class="container">
+
+			<header class="codrops-header">
+				<h2>Clase de simulacion</h2>
+				<h3>(Omar Castro)</h3>
+				<h1>Juego de las 8 Reinas<span>Coloque las 8 reinas en el tablero de ajedrez vacío</span><span>(No pueden haber dos reinas  en la misma fila, en la misma columna o a lo largo de la misma diagonal)</span></h1>
+			</header>
+
+<div id="centrar">
+<section id="grid" class="grid clearfix">
+
+
+
+<body onload="createBtn()">
+
+
+<input type="text"  style="width:0px; height:0px; visibility: hidden;" id="txtN" value=8 />
+
+<input type="button" id="btnSol" value="Reiniciar" onclick = "resetBoard()" />
+
+<br>
+<br>
+<div id ="cbtn" style = "width:400px;height:400px"></div>
+
+
+<script>
+var nMin=4;
+var nMax=12;
+var n=8;
+var stopLoop = false;
+var countQ=0;
+var countCheck = new Array(nMax+1);
+var btnValue = new Array(nMax+1);
+var board = new Array(nMax+1);
+
+var ansCol = new Array(nMax+1);
+for (var i=1;i<=nMax;i++){
+	btnValue[i]=new Array(nMax+1);
+	board[i]=new Array(nMax+1);
+}
+
+for (var i=1;i<=nMax;i++){
+	ansCol[i]=1;
+
+}
+
+function createBtn(){
+
+	var sc=""
+
+	for (var i=1;i<=nMax;i++){
+		for (var j=1;j<=nMax;j++){
+			sc = sc+"<input type=\"button\" style=\"width:30px; height:30px;\" id=\"btnArray"+i+"a"+j+"\" value=\"   \" onclick = \"btnClick("+i+","+j+")\" />";
+		}
+		sc =sc+"<br>";
+	}
+	document.getElementById("cbtn").innerHTML=sc;
+
+	getN();
+
+}
+
+
+function getN(){
+	if ((document.getElementById("txtN").value>=nMin) && (document.getElementById("txtN").value<=nMax)){
+		n = document.getElementById("txtN").value;
+		resetBoard();
+		buildBoard();
+
+	}
+	else
+	{
+		alert("Please enter number of Queens\nBetween "+nMin+" - "+nMax);
+	}
+
+}
+
+function resetBoard(){
+	countQ =0;
+    for (var i=1;i<=nMax; i++){
+        for (var j=1;j<=nMax; j++){
+			document.getElementById("btnArray"+i+"a"+j).value="   ";
+			document.getElementById("btnArray"+i+"a"+j).disabled=false;
+			document.getElementById("btnArray"+i+"a"+j).style.visibility="hidden";
+			btnValue[i][j]=0;
+			board[i][j]=0;
+        }
+		countCheck[i]= false;
+	}
+	buildBoard();
+}
+
+
+
+function buildBoard(){
+	for(var i=1;i<=n;i++){
+		for(var j=1;j<=n;j++){
+			document.getElementById("btnArray"+i+"a"+j).style.visibility="visible";
+		}
+	}
+}
+
+
+function btnClick(ai,aj){
+	var x = 0;
+	var y = 0;
+	x=ai;
+	y=aj;
+	if (document.getElementById("btnArray"+x+"a"+y).value == "   "){
+
+
+		var countCh = 1;
+		while (countCheck[countCh]){
+			countCh = countCh+1;
+		}
+		countCheck[countCh] = true;
+		document.getElementById("btnArray"+x+"a"+y).value = countCh;
+		btnValue[x][y] = btnValue[x][y]+1;
+
+		countQ = countQ+1;
+
+
+		
+		for (var i=1;i<=n;i++){
+            if(i != x){
+                btnValue[i][y]=btnValue[i][y]-1;
+                document.getElementById("btnArray"+i+"a"+y).disabled=true;
+            }
+        }
+
+		
+		for (var j=1;j<=n;j++){
+            if(j != y){
+                btnValue[x][j]=btnValue[x][j]-1;
+                document.getElementById("btnArray"+x+"a"+j).disabled=true;
+            }
+        }
+
+		
+        var tmpX = x;
+        var tmpY = y;
+        while ((tmpX>1) && (tmpY>1)){
+            tmpX=tmpX-1;
+            tmpY=tmpY-1;
+            btnValue[tmpX][tmpY]=btnValue[tmpX][tmpY]-1;
+
+            document.getElementById("btnArray"+tmpX+"a"+tmpY).disabled=true;
+
+        }
+
+		
+        tmpX = x;
+        tmpY = y;
+		while ((tmpX<n) && (tmpY<n)){
+            tmpX=tmpX+1;
+            tmpY=tmpY+1;
+            btnValue[tmpX][tmpY]=btnValue[tmpX][tmpY]-1;
+
+            document.getElementById("btnArray"+tmpX+"a"+tmpY).disabled=true;
+
+        }
+
+		
+        tmpX = x;
+        tmpY = y;
+        while ((tmpX>1) && (tmpY<n)){
+            tmpX=tmpX-1;
+            tmpY=tmpY+1;
+            btnValue[tmpX][tmpY]=btnValue[tmpX][tmpY]-1;
+
+            document.getElementById("btnArray"+tmpX+"a"+tmpY).disabled=true;
+
+        }
+
+		
+        tmpX = x;
+        tmpY = y;
+        while ((tmpX<n) && (tmpY>1)){
+            tmpX=tmpX+1;
+            tmpY=tmpY-1;
+            btnValue[tmpX][tmpY]=btnValue[tmpX][tmpY]-1;
+
+            document.getElementById("btnArray"+tmpX+"a"+tmpY).disabled=true;
+
+        }
+
+		if (countQ == n){
+			alert("Felicidades has ganado");
+		}
+
+	}
+	else
+	{
+		countQ = countQ-1;
+		countCheck[document.getElementById("btnArray"+x+"a"+y).value] = false;
+		document.getElementById("btnArray"+x+"a"+y).value = "   ";
+		btnValue[x][y]=btnValue[x][y]-1;
+
+		
+        for (var i=1;i<=n;i++){
+            if(i != x){
+                btnValue[i][y]=btnValue[i][y]+1;
+                if (btnValue[i][y]>=0){
+					document.getElementById("btnArray"+i+"a"+y).disabled=false;
+                }
+            }
+        }
+
+		
+        for (var j=1;j<=n;j++){
+            if(j != y){
+                btnValue[x][j]=btnValue[x][j]+1;
+                if (btnValue[x][j]>=0){
+                    document.getElementById("btnArray"+x+"a"+j).disabled=false;
+                }
+            }
+        }
+
+		
+		var tmpX = x;
+		var tmpY = y;
+
+        while ((tmpX>1) && (tmpY>1)){
+            tmpX=tmpX-1;
+            tmpY=tmpY-1;
+            btnValue[tmpX][tmpY]=btnValue[tmpX][tmpY]+1;
+            if (btnValue[tmpX][tmpY]>=0){
+				document.getElementById("btnArray"+tmpX+"a"+tmpY).disabled=false;
+            }
+
+        }
+
+
+		tmpX = x;
+		tmpY = y;
+
+        while ((tmpX<n) && (tmpY<n)){
+            tmpX=tmpX+1;
+            tmpY=tmpY+1;
+            btnValue[tmpX][tmpY]=btnValue[tmpX][tmpY]+1;
+            if (btnValue[tmpX][tmpY]>=0){
+                document.getElementById("btnArray"+tmpX+"a"+tmpY).disabled=false;
+            }
+
+        }
+
+		
+		tmpX = x;
+		tmpY = y;
+
+        while ((tmpX>1) && (tmpY<n)){
+            tmpX=tmpX-1;
+            tmpY=tmpY+1;
+            btnValue[tmpX][tmpY]=btnValue[tmpX][tmpY]+1;
+            if (btnValue[tmpX][tmpY]>=0){
+                document.getElementById("btnArray"+tmpX+"a"+tmpY).disabled=false;
+            }
+
+        }
+
+		
+		tmpX = x;
+		tmpY = y;
+
+        while ((tmpX<n) && (tmpY>1)){
+            tmpX=tmpX+1;
+            tmpY=tmpY-1;
+            btnValue[tmpX][tmpY]=btnValue[tmpX][tmpY]+1;
+            if (btnValue[tmpX][tmpY]>=0){
+                document.getElementById("btnArray"+tmpX+"a"+tmpY).disabled=false;
+            }
+
+        }
+
+	}
+}
+
+
+
+function findSol(aRowID){
+	var rowID = 0;
+	rowID = aRowID;
+
+	if (ansCol[rowID] >n){
+		ansCol[rowID] =1;
+	}
+
+	while (ansCol[rowID]<=n){
+		if (board[rowID][ansCol[rowID]]== 0){
+			if (rowID == n){
+				printSol();
+				stopLoop = true;
+				return;
+			}
+
+			disBoard(ansCol[rowID],rowID);
+			findSol(rowID+1);
+			enBoard(ansCol[rowID],rowID);
+		}
+		if (stopLoop){
+			return;
+		}
+		ansCol[rowID] = ansCol[rowID]+1;
+
+	}
+
+	return;
+}
+
+function printSol()
+{
+	var tmp;
+	tmp = ""
+	var t = 1;
+	var ansCopy = new Array(nMax+1);
+	for (var i=1;i<=nMax;i++){
+		ansCopy[i]=ansCol[i];
+
+	}
+	var myAnima = window.setInterval(function(){timeSol()},800);
+	document.getElementById("btnSol").disabled=true;
+	function timeSol(){
+		tmp = tmp+"row = "+t+" column = "+ansCopy[t]+"<br>";
+		$("#solution").html(tmp);
+		btnClick(t,ansCopy[t]); 
+		if (t == n-1){
+			window.clearInterval(myAnima);
+			document.getElementById("btnSol").disabled=false;
+		}
+		t = t+1;
+	}
+}
+
+function disBoard(x,y)
+{
+	
+	for (var i=y+1;i<=n;i++){
+		board[i][x]=board[i][x]-1;
+	}
+
+	var tmpX,tmpY;
+
+        tmpX = x;
+        tmpY = y;
+        while ((tmpX>1) && (tmpY<n)){
+		tmpX = tmpX-1;
+		tmpY = tmpY+1;
+		board[tmpY][tmpX]=board[tmpY][tmpX]-1;
+		}
+
+	
+	tmpX = x;
+	tmpY = y;
+	while ((tmpX<n) && (tmpY<n)){
+        tmpX = tmpX+1;
+		tmpY = tmpY+1;
+		board[tmpY][tmpX]=board[tmpY][tmpX]-1;
+	}
+}
+
+function enBoard(x,y){
+	
+	for (var i=y+1;i<=n;i++){
+		board[i][x]=board[i][x]+1;
+	}
+
+	var tmpX,tmpY;
+
+        
+    tmpX = x;
+    tmpY = y;
+    while ((tmpX>1) && (tmpY<n)){
+		tmpX = tmpX-1;
+		tmpY = tmpY+1;
+		board[tmpY][tmpX]=board[tmpY][tmpX]+1;
+	}
+
+	
+	tmpX = x;
+	tmpY = y;
+	while ((tmpX<n) && (tmpY<n)){
+        tmpX = tmpX+1;
+		tmpY = tmpY+1;
+		board[tmpY][tmpX]=board[tmpY][tmpX]+1;
+	}
+}
+
+</script>
+
+
+
+		
+		
+
+	</section>
+	
+</div>
+
+		
+
+	</body>
+</html>
